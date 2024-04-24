@@ -2,13 +2,32 @@ package org.example;
 
 import org.example.controller.UrlController;
 import org.example.controller.dto.UrlDto;
+import org.example.jdbc.JdbcUtils;
 import org.example.repository.UrlRepositoryImpl;
+import org.example.repository.dao.UrlDao;
 import org.example.service.UrlServiceImpl;
 import org.example.utils.ReadUtils;
 import org.example.exception.EntityNotFoundException;
 
+import java.sql.*;
+
 public class Main {
     public static void main(String[] args) {
+        try {
+            boolean connected = JdbcUtils.createConnection();
+            if (!connected) {
+                System.out.println("Error with connection to database");
+                return;
+            }
+
+            runCli();
+        }
+        finally {
+            JdbcUtils.closeConnection();
+        }
+    }
+
+    private static void runCli() {
         UrlController urlController = new UrlController(new UrlServiceImpl(new UrlRepositoryImpl()));
 
         while(true) {

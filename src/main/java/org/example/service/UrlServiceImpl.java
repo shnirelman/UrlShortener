@@ -5,6 +5,7 @@ import org.example.repository.UrlRepository;
 import org.example.repository.dao.UrlDao;
 import org.example.service.model.Url;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class UrlServiceImpl implements UrlService {
@@ -21,17 +22,35 @@ public class UrlServiceImpl implements UrlService {
 
     @Override
     public String addUrl(Url url) {
-        Optional<UrlDao> res = urlRepository.findUrlByLongForm(url.longForm());
+        Optional<UrlDao> res = null;
+        try {
+            res = urlRepository.findUrlByLongForm(url.longForm());
+        } catch (SQLException ex) {
+            throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
+        }
         if(res.isPresent())
             return shortFormPrefix + res.get().shortForm();
 
         long hash = primaryHash(url.longForm());
-        String shortForm;
-        do {
+        String shortForm = null;
+        boolean exists = true;
+        while(exists) {
             shortForm = longToShortForm(hash);
             hash = (hash == MOD - 1 ? 0L : hash + 1);
-        } while(urlRepository.findUrlByShortForm(shortForm).isPresent());
-        urlRepository.save(new UrlDao(url.longForm(), shortForm));
+
+            try {
+                exists = urlRepository.findUrlByShortForm(shortForm).isPresent();
+            } catch (SQLException ex) {
+                throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
+            }
+        }
+
+        try {
+            urlRepository.save(new UrlDao(url.longForm(), shortForm));
+        } catch (SQLException ex) {
+            throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
+        }
+
         return shortFormPrefix + shortForm;
     }
 
@@ -44,7 +63,14 @@ public class UrlServiceImpl implements UrlService {
         if(!prefix.equals(shortFormPrefix))
             throw new EntityNotFoundException("Ссылка должна начинаться с " + shortFormPrefix);
 
-        Optional<UrlDao> urlDao = urlRepository.findUrlByShortForm(shortForm.substring(shortFormPrefix.length()));
+        Optional<UrlDao> urlDao = null;
+        try {
+            urlDao = urlRepository.findUrlByShortForm(shortForm.substring(shortFormPrefix.length()));
+
+        } catch (SQLException ex) {
+            throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
+        }
+
         if(urlDao.isEmpty())
             throw new EntityNotFoundException("Ссылка не найдена");
         return new Url(urlDao.get().longForm(), urlDao.get().shortForm());
