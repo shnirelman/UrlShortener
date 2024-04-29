@@ -4,10 +4,12 @@ import org.example.exception.EntityNotFoundException;
 import org.example.repository.UrlRepository;
 import org.example.repository.dao.UrlDao;
 import org.example.service.model.Url;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
+@Service
 public class UrlServiceImpl implements UrlService {
     private final String shortFormPrefix = "https://shorten.com/";
     private final UrlRepository urlRepository;
@@ -56,6 +58,7 @@ public class UrlServiceImpl implements UrlService {
 
     @Override
     public Url getUrl(String shortForm) throws EntityNotFoundException {
+
         if(shortForm.length() < shortFormPrefix.length())
             throw new EntityNotFoundException("Ссылка должна начинаться с " + shortFormPrefix);
 
