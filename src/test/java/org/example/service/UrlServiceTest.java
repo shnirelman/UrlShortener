@@ -1,48 +1,98 @@
 package org.example.service;
 
+import org.example.controller.dto.UrlDto;
 import org.example.exception.EntityNotFoundException;
+import org.example.repository.UrlRepository;
 import org.example.repository.UrlRepositoryImpl;
+import org.example.repository.dao.UrlDao;
 import org.example.service.model.Url;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+
+import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.google.gson.*;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UrlServiceTest {
-    private final UrlService urlService = new UrlServiceImpl(new UrlRepositoryImpl());
-    
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private UrlRepository urlRepository;
+
     @Test
-    void testAddUrl() throws EntityNotFoundException {
-        //given:
-        Url url = new Url("abacaba.com");
-        //when:
-        String shortForm = urlService.addUrl(url);
-        Url savedUrl = urlService.getUrl(shortForm);
-        //then:
-        assertEquals(url.longForm(), savedUrl.longForm());
+    void testGetMissingUrl() throws Exception {
+        Mockito.doReturn(Optional.empty())
+                .when(urlRepository)
+                .findUrlByShortForm("abacaba");
+
+        mockMvc.perform(get("/url/abacaba"))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.longForm", is("URL does not exist"))
+                );
     }
 
     @Test
-    void testAddSameUrlMultipleTimes() throws EntityNotFoundException {
-        //given:
-        Url url = new Url("abacaba.com");
-        //when:
-        String shortForm = urlService.addUrl(url);
-        //then:
+    void testAddSameUrlMultipleTimes() throws Exception {
+        String longForm = "test_add_url_2";
+        String shortFormSuffix = "abc";
+        UrlDao urlDao = new UrlDao(longForm, shortFormSuffix);
+        Mockito.doReturn(Optional.of(urlDao))
+                .when(urlRepository)
+                .findUrlByLongForm(longForm);
+        Mockito.doReturn(Optional.of(urlDao))
+                .when(urlRepository)
+                .findUrlByShortForm(shortFormSuffix);
+
+        UrlDto urlDto = new UrlDto(longForm);
+        Gson gson = new GsonBuilder()
+                .setPrettyPrinting()
+                .create();
+        String json = gson.toJson(urlDto);
+        MvcResult mvcResult =
+                mockMvc.perform(post("/url/create")
+                                .contentType("application/json;charset=UTF-8")
+                                .content(json))
+                        .andExpectAll(
+                                status().isOk()
+                        ).andReturn();
+        String shortForm = mvcResult.getResponse().getContentAsString();
+        assertEquals(shortFormSuffix, shortForm.substring(UrlServiceImpl.shortFormPrefix.length()));
+
         for(int i = 0; i < 10; i++) {
-            String newShortForm = urlService.addUrl(url);
-            assertEquals(shortForm, newShortForm);
+            MvcResult mvcResult2 =
+                    mockMvc.perform(post("/url/create")
+                                    .contentType("application/json;charset=UTF-8")
+                                    .content(json))
+                            .andExpectAll(
+                                    status().isOk()
+                            ).andReturn();
+            assertEquals(shortForm, mvcResult2.getResponse().getContentAsString());
         }
-    }
 
-    @Test
-    void testGetMissingUrl() throws EntityNotFoundException {
-        //given:
-        String shortForm = "https://shorten.com/abacaba";
-        //when:
-        EntityNotFoundException ex = assertThrows(EntityNotFoundException.class, () -> {
-            urlService.getUrl(shortForm);
-        });
-        //then:
-        assertEquals(ex.getMessage(), "Ссылка не найдена");
+        mockMvc.perform(get("/url/" + shortFormSuffix))
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.longForm", is(longForm))
+                );
     }
 }
