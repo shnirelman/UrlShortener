@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UrlServiceTest {
     private final UrlService urlService = new UrlServiceImpl(new UrlRepositoryImpl());
-
+    
     @Test
     void testAddUrl() throws EntityNotFoundException {
         //given:

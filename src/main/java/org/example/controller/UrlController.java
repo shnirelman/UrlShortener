@@ -4,6 +4,7 @@ import org.example.controller.dto.UrlDto;
 import org.example.exception.EntityNotFoundException;
 import org.example.repository.UrlRepository;
 import org.example.service.UrlService;
+import org.example.service.UrlServiceImpl;
 import org.example.service.model.Url;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,10 +23,10 @@ public class UrlController {
         return urlService.addUrl(new Url(urlDto.longForm()));
     }
 
-    @GetMapping("/{shortFrom}")
-    public UrlDto getUrlByShortForm(@PathVariable("shortFrom") String shortForm) throws EntityNotFoundException {
-        System.out.println("get url" + shortForm);
-        Url url = urlService.getUrl(shortForm);
+    @GetMapping("/{shortFormSuffix}")
+    public UrlDto getUrlByShortForm(@PathVariable("shortFormSuffix") String shortFormSuffix) throws EntityNotFoundException {
+        System.out.println("get url" + shortFormSuffix);
+        Url url = urlService.getUrl(UrlServiceImpl.shortFormPrefix + shortFormSuffix);
         return new UrlDto(url.longForm(), url.shortForm());
     }
 }
