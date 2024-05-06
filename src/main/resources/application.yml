@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: url-app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/DB_Urls
+    username: admin
+    password: admin
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+
+logging:
+  level:
+    sql: INFO
+

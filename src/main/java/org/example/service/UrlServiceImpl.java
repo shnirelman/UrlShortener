@@ -2,7 +2,7 @@ package org.example.service;
 
 import org.example.exception.EntityNotFoundException;
 import org.example.repository.UrlRepository;
-import org.example.repository.dao.UrlDao;
+import org.example.repository.entity.UrlEntity;
 import org.example.service.model.Url;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +24,10 @@ public class UrlServiceImpl implements UrlService {
 
     @Override
     public String addUrl(Url url) {
-        Optional<UrlDao> res = null;
-        try {
-            res = urlRepository.findUrlByLongForm(url.longForm());
-        } catch (SQLException ex) {
-            throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
-        }
+        Optional<UrlEntity> res = null;
+        res = urlRepository.findByLongForm(url.longForm());
         if(res.isPresent())
-            return shortFormPrefix + res.get().shortForm();
+            return shortFormPrefix + res.get().getShortForm();
 
         long hash = primaryHash(url.longForm());
         String shortForm = null;
@@ -40,25 +36,16 @@ public class UrlServiceImpl implements UrlService {
             shortForm = longToShortForm(hash);
             hash = (hash == MOD - 1 ? 0L : hash + 1);
 
-            try {
-                exists = urlRepository.findUrlByShortForm(shortForm).isPresent();
-            } catch (SQLException ex) {
-                throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
-            }
+            exists = urlRepository.findByShortForm(shortForm).isPresent();
         }
 
-        try {
-            urlRepository.save(new UrlDao(url.longForm(), shortForm));
-        } catch (SQLException ex) {
-            throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
-        }
+        urlRepository.save(new UrlEntity(shortForm, url.longForm()));
 
         return shortFormPrefix + shortForm;
     }
 
     @Override
     public Url getUrl(String shortForm) throws EntityNotFoundException {
-
         if(shortForm.length() < shortFormPrefix.length())
             throw new EntityNotFoundException("Ссылка должна начинаться с " + shortFormPrefix);
 
@@ -66,17 +53,12 @@ public class UrlServiceImpl implements UrlService {
         if(!prefix.equals(shortFormPrefix))
             throw new EntityNotFoundException("Ссылка должна начинаться с " + shortFormPrefix);
 
-        Optional<UrlDao> urlDao = null;
-        try {
-            urlDao = urlRepository.findUrlByShortForm(shortForm.substring(shortFormPrefix.length()));
+        Optional<UrlEntity> urlEntity = null;
+        urlEntity = urlRepository.findByShortForm(shortForm.substring(shortFormPrefix.length()));
 
-        } catch (SQLException ex) {
-            throw new RuntimeException("Ошибка при взаимодействии с базой данных", ex);
-        }
-
-        if(urlDao.isEmpty())
+        if(urlEntity.isEmpty())
             throw new EntityNotFoundException("Ссылка не найдена");
-        return new Url(urlDao.get().longForm(), urlDao.get().shortForm());
+        return new Url(urlEntity.get().getShortForm(), urlEntity.get().getLongForm());
     }
 
     private long primaryHash(String longForm) {

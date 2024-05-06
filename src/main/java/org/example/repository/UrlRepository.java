@@ -1,14 +1,20 @@
 package org.example.repository;
 
-import org.example.repository.dao.UrlDao;
+import org.example.repository.entity.UrlEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
-public interface UrlRepository {
+@Repository
+public interface UrlRepository extends JpaRepository<UrlEntity, Long> {
 
-    Optional<UrlDao> findUrlByLongForm(String longForm) throws SQLException;
+//    Optional<UrlEntity> findUrlEntityBy
 
-    Optional<UrlDao> findUrlByShortForm(String shortForm) throws SQLException;
-    void save(UrlDao urlDao) throws SQLException;
+    @Query
+    Optional<UrlEntity> findByLongForm(String longForm);
+    @Query
+    Optional<UrlEntity> findByShortForm(String shortForm);
 }

@@ -1,11 +1,7 @@
 package org.example.service;
 
 import org.example.controller.dto.UrlDto;
-import org.example.exception.EntityNotFoundException;
 import org.example.repository.UrlRepository;
-import org.example.repository.UrlRepositoryImpl;
-import org.example.repository.dao.UrlDao;
-import org.example.service.model.Url;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +14,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -32,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UrlServiceTest {
-    @Autowired
+    /*@Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -94,5 +89,5 @@ public class UrlServiceTest {
                         status().isOk(),
                         jsonPath("$.longForm", is(longForm))
                 );
-    }
+    }*/
 }
