@@ -24,8 +24,8 @@ public class UrlController {
     }
 
     @GetMapping("/{shortFormSuffix}")
-    public UrlDto getUrlByShortForm(@PathVariable("shortFormSuffix") String shortFormSuffix) throws EntityNotFoundException {
+    public String getUrlByShortForm(@PathVariable("shortFormSuffix") String shortFormSuffix) throws EntityNotFoundException {
         Url url = urlService.getUrl(UrlServiceImpl.shortFormPrefix + shortFormSuffix);
-        return new UrlDto(url.longForm(), url.shortForm());
+        return "redirect:" + url.longForm();
     }
 }

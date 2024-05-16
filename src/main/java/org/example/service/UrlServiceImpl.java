@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @Service
 public class UrlServiceImpl implements UrlService {
-    public static final String shortFormPrefix = "https://shorten.com/";
+    public static final String shortFormPrefix = "http://localhost:8080/url/";
     private final UrlRepository urlRepository;
     private final int alphabet = 62;
     private final long MOD = 1000000006189L; // random big prime number

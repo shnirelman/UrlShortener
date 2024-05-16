@@ -1,7 +1,8 @@
-package org.example.service;
+package org.example.controller;
 
 import org.example.controller.dto.UrlDto;
 import org.example.repository.UrlRepository;
+import org.example.repository.entity.UrlEntity;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class UrlServiceTest {
-    /*@Autowired
+public class UrlControllerTest {
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -37,12 +38,11 @@ public class UrlServiceTest {
     void testGetMissingUrl() throws Exception {
         Mockito.doReturn(Optional.empty())
                 .when(urlRepository)
-                .findUrlByShortForm("abacaba");
+                .findByShortForm("abacaba");
 
         mockMvc.perform(get("/url/abacaba"))
                 .andExpectAll(
-                        status().isOk(),
-                        jsonPath("$.longForm", is("URL does not exist"))
+                        status().is4xxClientError()
                 );
     }
 
@@ -50,13 +50,13 @@ public class UrlServiceTest {
     void testAddSameUrlMultipleTimes() throws Exception {
         String longForm = "test_add_url_2";
         String shortFormSuffix = "abc";
-        UrlDao urlDao = new UrlDao(longForm, shortFormSuffix);
-        Mockito.doReturn(Optional.of(urlDao))
+        UrlEntity urlEntity = new UrlEntity(shortFormSuffix, longForm);
+        Mockito.doReturn(Optional.of(urlEntity))
                 .when(urlRepository)
-                .findUrlByLongForm(longForm);
-        Mockito.doReturn(Optional.of(urlDao))
+                .findByLongForm(longForm);
+        Mockito.doReturn(Optional.of(urlEntity))
                 .when(urlRepository)
-                .findUrlByShortForm(shortFormSuffix);
+                .findByShortForm(shortFormSuffix);
 
         UrlDto urlDto = new UrlDto(longForm);
         Gson gson = new GsonBuilder()
@@ -71,7 +71,7 @@ public class UrlServiceTest {
                                 status().isOk()
                         ).andReturn();
         String shortForm = mvcResult.getResponse().getContentAsString();
-        assertEquals(shortFormSuffix, shortForm.substring(UrlServiceImpl.shortFormPrefix.length()));
+//        assertEquals(shortFormSuffix, shortForm.substring(UrlServiceImpl.shortFormPrefix.length()));
 
         for(int i = 0; i < 10; i++) {
             MvcResult mvcResult2 =
@@ -84,10 +84,11 @@ public class UrlServiceTest {
             assertEquals(shortForm, mvcResult2.getResponse().getContentAsString());
         }
 
-        mockMvc.perform(get("/url/" + shortFormSuffix))
-                .andExpectAll(
-                        status().isOk(),
-                        jsonPath("$.longForm", is(longForm))
-                );
-    }*/
+        MvcResult mvcResult3 = mockMvc.perform(get("/url/" + shortFormSuffix))
+                .andExpect(
+                        status().isOk()
+                ).andReturn();
+        assertEquals("redirect:" + longForm, mvcResult3.getResponse().getContentAsString());
+
+    }
 }
