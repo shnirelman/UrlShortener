@@ -12,6 +12,13 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation(group: 'org.postgresql', name: 'postgresql', version: '42.7.3')
+    testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4')
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter', version: '3.2.4')
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-jetty', version: '3.2.4')
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-web-services', version: '3.2.4')
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'
 }
 
 test {
