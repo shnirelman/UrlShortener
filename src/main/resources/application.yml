@@ -2,7 +2,7 @@ spring:
   application:
     name: url-app
   datasource:
-    url: jdbc:postgresql://localhost:5432/DB_Urls
+    url: jdbc:postgresql://localhost:5433/DB_Urls2
     username: admin
     password: admin
   jpa:
@@ -10,8 +10,9 @@ spring:
       hibernate:
         hbm2ddl:
           auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
 
 logging:
   level:
     sql: INFO
-

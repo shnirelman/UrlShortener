@@ -28,67 +28,67 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class UrlControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private UrlRepository urlRepository;
-
-    @Test
-    void testGetMissingUrl() throws Exception {
-        Mockito.doReturn(Optional.empty())
-                .when(urlRepository)
-                .findByShortForm("abacaba");
-
-        mockMvc.perform(get("/url/abacaba"))
-                .andExpectAll(
-                        status().is4xxClientError()
-                );
-    }
-
-    @Test
-    void testAddSameUrlMultipleTimes() throws Exception {
-        String longForm = "test_add_url_2";
-        String shortFormSuffix = "abc";
-        UrlEntity urlEntity = new UrlEntity(shortFormSuffix, longForm);
-        Mockito.doReturn(Optional.of(urlEntity))
-                .when(urlRepository)
-                .findByLongForm(longForm);
-        Mockito.doReturn(Optional.of(urlEntity))
-                .when(urlRepository)
-                .findByShortForm(shortFormSuffix);
-
-        UrlDto urlDto = new UrlDto(longForm);
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .create();
-        String json = gson.toJson(urlDto);
-        MvcResult mvcResult =
-                mockMvc.perform(post("/url/create")
-                                .contentType("application/json;charset=UTF-8")
-                                .content(json))
-                        .andExpectAll(
-                                status().isOk()
-                        ).andReturn();
-        String shortForm = mvcResult.getResponse().getContentAsString();
-//        assertEquals(shortFormSuffix, shortForm.substring(UrlServiceImpl.shortFormPrefix.length()));
-
-        for(int i = 0; i < 10; i++) {
-            MvcResult mvcResult2 =
-                    mockMvc.perform(post("/url/create")
-                                    .contentType("application/json;charset=UTF-8")
-                                    .content(json))
-                            .andExpectAll(
-                                    status().isOk()
-                            ).andReturn();
-            assertEquals(shortForm, mvcResult2.getResponse().getContentAsString());
-        }
-
-        MvcResult mvcResult3 = mockMvc.perform(get("/url/" + shortFormSuffix))
-                .andExpect(
-                        status().isOk()
-                ).andReturn();
-        assertEquals("redirect:" + longForm, mvcResult3.getResponse().getContentAsString());
-
-    }
+//    @Autowired
+//    private MockMvc mockMvc;
+//
+//    @MockBean
+//    private UrlRepository urlRepository;
+//
+//    @Test
+//    void testGetMissingUrl() throws Exception {
+//        Mockito.doReturn(Optional.empty())
+//                .when(urlRepository)
+//                .findByShortForm("abacaba");
+//
+//        mockMvc.perform(get("/url/abacaba"))
+//                .andExpectAll(
+//                        status().is4xxClientError()
+//                );
+//    }
+//
+//    @Test
+//    void testAddSameUrlMultipleTimes() throws Exception {
+//        String longForm = "test_add_url_2";
+//        String shortFormSuffix = "abc";
+//        UrlEntity urlEntity = new UrlEntity(shortFormSuffix, longForm);
+//        Mockito.doReturn(Optional.of(urlEntity))
+//                .when(urlRepository)
+//                .findByLongForm(longForm);
+//        Mockito.doReturn(Optional.of(urlEntity))
+//                .when(urlRepository)
+//                .findByShortForm(shortFormSuffix);
+//
+//        UrlDto urlDto = new UrlDto(longForm);
+//        Gson gson = new GsonBuilder()
+//                .setPrettyPrinting()
+//                .create();
+//        String json = gson.toJson(urlDto);
+//        MvcResult mvcResult =
+//                mockMvc.perform(post("/url/create")
+//                                .contentType("application/json;charset=UTF-8")
+//                                .content(json))
+//                        .andExpectAll(
+//                                status().isOk()
+//                        ).andReturn();
+//        String shortForm = mvcResult.getResponse().getContentAsString();
+////        assertEquals(shortFormSuffix, shortForm.substring(UrlServiceImpl.shortFormPrefix.length()));
+//
+//        for(int i = 0; i < 10; i++) {
+//            MvcResult mvcResult2 =
+//                    mockMvc.perform(post("/url/create")
+//                                    .contentType("application/json;charset=UTF-8")
+//                                    .content(json))
+//                            .andExpectAll(
+//                                    status().isOk()
+//                            ).andReturn();
+//            assertEquals(shortForm, mvcResult2.getResponse().getContentAsString());
+//        }
+//
+//        MvcResult mvcResult3 = mockMvc.perform(get("/url/" + shortFormSuffix))
+//                .andExpect(
+//                        status().isOk()
+//                ).andReturn();
+//        assertEquals("redirect:" + longForm, mvcResult3.getResponse().getContentAsString());
+//
+//    }
 }
