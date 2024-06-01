@@ -1,7 +1,7 @@
 package org.example.service.model;
 
-public record Url(String longForm, String shortForm) {
+public record Url(String shortForm, String longForm) {
     public Url(String longForm) {
-        this(longForm, null);
+        this(null, longForm);
     }
 }

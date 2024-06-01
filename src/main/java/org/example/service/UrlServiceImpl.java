@@ -2,13 +2,17 @@ package org.example.service;
 
 import org.example.exception.EntityNotFoundException;
 import org.example.repository.UrlRepository;
-import org.example.repository.dao.UrlDao;
+import org.example.repository.entity.UrlEntity;
 import org.example.service.model.Url;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
+@Service
 public class UrlServiceImpl implements UrlService {
-    private final String shortFormPrefix = "https://shorten.com/";
+    public static final String shortFormPrefix = "http://localhost:8080/url/";
     private final UrlRepository urlRepository;
     private final int alphabet = 62;
     private final long MOD = 1000000006189L; // random big prime number
@@ -21,21 +25,28 @@ public class UrlServiceImpl implements UrlService {
 
     @Override
     public String addUrl(Url url) {
-        Optional<UrlDao> res = urlRepository.findUrlByLongForm(url.longForm());
+        Optional<UrlEntity> res = null;
+        res = urlRepository.findByLongForm(url.longForm());
         if(res.isPresent())
-            return shortFormPrefix + res.get().shortForm();
+            return shortFormPrefix + res.get().getShortForm();
 
         long hash = primaryHash(url.longForm());
-        String shortForm;
-        do {
+        String shortForm = null;
+        boolean exists = true;
+        while(exists) {
             shortForm = longToShortForm(hash);
             hash = (hash == MOD - 1 ? 0L : hash + 1);
-        } while(urlRepository.findUrlByShortForm(shortForm).isPresent());
-        urlRepository.save(new UrlDao(url.longForm(), shortForm));
+
+            exists = urlRepository.findByShortForm(shortForm).isPresent();
+        }
+
+        urlRepository.save(new UrlEntity(shortForm, url.longForm()));
+
         return shortFormPrefix + shortForm;
     }
 
     @Override
+    @Cacheable(cacheNames = "urls", cacheManager = "cacheManager")
     public Url getUrl(String shortForm) throws EntityNotFoundException {
         if(shortForm.length() < shortFormPrefix.length())
             throw new EntityNotFoundException("Ссылка должна начинаться с " + shortFormPrefix);
@@ -44,10 +55,13 @@ public class UrlServiceImpl implements UrlService {
         if(!prefix.equals(shortFormPrefix))
             throw new EntityNotFoundException("Ссылка должна начинаться с " + shortFormPrefix);
 
-        Optional<UrlDao> urlDao = urlRepository.findUrlByShortForm(shortForm.substring(shortFormPrefix.length()));
-        if(urlDao.isEmpty())
-            throw new EntityNotFoundException("Ссылка не найдена");
-        return new Url(urlDao.get().longForm(), urlDao.get().shortForm());
+        Optional<UrlEntity> urlEntity = null;
+        urlEntity = urlRepository.findByShortForm(shortForm.substring(shortFormPrefix.length()));
+
+        if(urlEntity.isEmpty())
+            throw new EntityNotFoundException("Короткая ссылка " + shortForm + " ничему не соответствует.");
+
+        return new Url(urlEntity.get().getShortForm(), urlEntity.get().getLongForm());
     }
 
     private long primaryHash(String longForm) {

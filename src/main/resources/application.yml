@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: url-app
+  datasource:
+    url: jdbc:postgresql://localhost:5433/DB_Urls2
+    username: admin
+    password: admin
+  jpa:
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: update
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  cache:
+    redis:
+      use-key-prefix: true
+      key-prefix:
+  data:
+    redis:
+      host: redis
+      port: 6379
+
+
+logging:
+  level:
+    sql: INFO
