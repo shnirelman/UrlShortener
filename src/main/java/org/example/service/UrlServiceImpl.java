@@ -59,7 +59,8 @@ public class UrlServiceImpl implements UrlService {
         urlEntity = urlRepository.findByShortForm(shortForm.substring(shortFormPrefix.length()));
 
         if(urlEntity.isEmpty())
-            throw new EntityNotFoundException("Ссылка не найдена");
+            throw new EntityNotFoundException("Короткая ссылка " + shortForm + " ничему не соответствует.");
+
         return new Url(urlEntity.get().getShortForm(), urlEntity.get().getLongForm());
     }
 

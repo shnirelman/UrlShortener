@@ -7,8 +7,6 @@ import jakarta.persistence.*;
 public class UrlEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-//    @GeneratedValue(generator = "urls_id_seq")
-//    @SequenceGenerator(name = "urls_id_seq", sequenceName = "urls_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "short_form")

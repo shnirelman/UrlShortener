@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 public class UrlController {
     private final UrlService urlService;
 
-
     public UrlController(UrlService urlService) {
         this.urlService = urlService;
     }
@@ -26,6 +25,6 @@ public class UrlController {
     @GetMapping("/{shortFormSuffix}")
     public String getUrlByShortForm(@PathVariable("shortFormSuffix") String shortFormSuffix) throws EntityNotFoundException {
         Url url = urlService.getUrl(UrlServiceImpl.shortFormPrefix + shortFormSuffix);
-        return "redirect:" + url.longForm();
+        return url.longForm();
     }
 }
