@@ -4,6 +4,7 @@ import org.example.exception.EntityNotFoundException;
 import org.example.repository.UrlRepository;
 import org.example.repository.entity.UrlEntity;
 import org.example.service.model.Url;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -45,6 +46,7 @@ public class UrlServiceImpl implements UrlService {
     }
 
     @Override
+    @Cacheable(cacheNames = "urls", cacheManager = "cacheManager")
     public Url getUrl(String shortForm) throws EntityNotFoundException {
         if(shortForm.length() < shortFormPrefix.length())
             throw new EntityNotFoundException("Ссылка должна начинаться с " + shortFormPrefix);

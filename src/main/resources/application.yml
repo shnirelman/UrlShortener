@@ -12,6 +12,15 @@ spring:
           auto: update
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+  cache:
+    redis:
+      use-key-prefix: true
+      key-prefix:
+  data:
+    redis:
+      host: redis
+      port: 6379
+
 
 logging:
   level:

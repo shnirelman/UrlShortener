@@ -11,6 +11,17 @@ services:
     ports:
       - "5433:5432"
 
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=12345
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
   url-service:
     build:
       context: .
@@ -29,3 +40,4 @@ services:
       - "8080:8080"
     depends_on:
       - db
+      - redis
