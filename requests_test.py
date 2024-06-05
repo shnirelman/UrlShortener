@@ -19,43 +19,50 @@ def url_generator():
     return 'http://' + string_generator() + '.' + string_generator(3, string.ascii_lowercase)
 
 a = []
-for i in range(0, 10):
+
+start = time.time()
+for i in range(0, 100):
     long  = url_generator()
     short = addUrl(long).text
     a.append((long, short))
+finish = time.time()
+
+print("average creating time: ", (finish - start) / len(a))
 
 for i in range(0, min(len(a), 10)):
     print(a[i])
 
-start = time.time()
-requests.get('http://localhost:8080/url/61t3Hc6')
-finish = time.time()
-print('test query: 1st access: time = ', (finish - start))
-start = time.time()
-requests.get('http://localhost:8080/url/61t3Hc6')
-finish = time.time()
-print('test query: 2nd access: time = ', (finish - start))
 
+global_start = time.time()
 
-start = time.time()
+s = 0
 
 for p in a:
+    #start = time.time()
     getUrlByFullLink(p[1])
+    #finish = time.time()
+    #s += finish - start
 
-finish = time.time()
+global_finish = time.time()
 
-print('1st access: average time per request = ', (finish - start) / len(a))
+print('1st access: average time per request = ', (global_finish - global_start) / len(a))
+#print('1st access: average time per request = ', s / len(a))
 
-start = time.time()
+global_start = time.time()
+
+s = 0
 
 for p in a:
+    #start = time.time()
     getUrlByFullLink(p[1])
+    #finish = time.time()
+    #s += finish - start
 
-finish = time.time()
+global_finish = time.time()
 
+print('2st access: average time per request = ', (global_finish - global_start) / len(a))
+#print('2st access: average time per request = ', s / len(a))
 
-print('2nd access: average time per request = ', (finish - start) / len(a))
-
-for i in range(0, min(len(a), 10)):
-    res = getUrlByFullLink(a[i][1]).text
-    print(a[i][0], res)
+#for i in range(0, min(len(a), 10)):
+#    res = getUrlByFullLink(a[i][1]).text
+#    print(a[i][0], res)

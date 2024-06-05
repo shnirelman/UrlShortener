@@ -20,8 +20,12 @@ spring:
     redis:
       host: redis
       port: 6379
-
+  kafka:
+    bootstrap-servers: http://kafka:29092
 
 logging:
   level:
     sql: INFO
+
+kafka:
+  bootstrap-servers: http://kafka:29092

@@ -8,6 +8,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -40,7 +44,7 @@ public class UrlServiceImpl implements UrlService {
             exists = urlRepository.findByShortForm(shortForm).isPresent();
         }
 
-        urlRepository.save(new UrlEntity(shortForm, url.longForm()));
+        urlRepository.save(new UrlEntity(shortForm, url.longForm(), Instant.now()));
 
         return shortFormPrefix + shortForm;
     }
@@ -61,7 +65,33 @@ public class UrlServiceImpl implements UrlService {
         if(urlEntity.isEmpty())
             throw new EntityNotFoundException("Короткая ссылка " + shortForm + " ничему не соответствует.");
 
-        return new Url(urlEntity.get().getShortForm(), urlEntity.get().getLongForm());
+        return new Url(urlEntity.get().getId(), urlEntity.get().getShortForm(), urlEntity.get().getLongForm());
+    }
+
+    @Override
+    public void updateUsedTime(Long id) {
+//        urlRepository.updateUsedTime(id, Instant.now());
+        Thread thread = new Thread(() -> {
+            urlRepository.updateUsedTime(id, Instant.now());
+        });
+        thread.start();
+    }
+
+    @Override
+    public void deleteUrl(Long id) {
+        urlRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Long> getAllNotUpdatedForADay() {
+//        var instant = Instant.now().minus(1, ChronoUnit.DAYS);
+        var instant = Instant.now().minus(1, ChronoUnit.MINUTES);
+        System.out.println("instant = " + instant);
+        List<Long> res =  urlRepository.findIdsByUsedAtLessThan(instant);
+//        List<Long> res =  urlRepository.getIdsByUsedAtLessThan(instant);
+        System.out.println("res = " + res);
+        return res;
+        //return new ArrayList<>();
     }
 
     private long primaryHash(String longForm) {

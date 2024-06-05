@@ -1,6 +1,9 @@
 package org.example.repository.entity;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.Instant;
 
 @Entity
 @Table(name = "urls")
@@ -15,13 +18,21 @@ public class UrlEntity {
     @Column(name = "long_form")
     private String longForm;
 
+//    @UpdateTimestamp
+//    @Column(name = "updated_at")
+//    private Instant updatedAt;
+
+    @Column(name = "used_at")
+    private Instant usedAt;
+
     public UrlEntity() {
 
     }
 
-    public UrlEntity(String shortForm, String longForm) {
+    public UrlEntity(String shortForm, String longForm, Instant createdAt) {
         this.shortForm = shortForm;
         this.longForm = longForm;
+        this.usedAt = createdAt;
     }
 
     public Long getId() {
@@ -47,4 +58,20 @@ public class UrlEntity {
     public void setLongForm(String longForm) {
         this.longForm = longForm;
     }
+
+    public Instant getUsedAt() {
+        return usedAt;
+    }
+
+    public void setUsedAt(Instant usedAt) {
+        this.usedAt = usedAt;
+    }
+
+    //    public Instant getUpdatedAt() {
+//        return updatedAt;
+//    }
+//
+//    public void setUpdatedAt(Instant updatedAt) {
+//        this.updatedAt = updatedAt;
+//    }
 }

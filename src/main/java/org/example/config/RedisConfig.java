@@ -9,6 +9,6 @@ public class RedisConfig {
 
     @Bean
     public RedisClient redisClient() {
-        return RedisClient.create("redis://localhost:6379");
+        return RedisClient.create("redis://redis:6379");
     }
 }
