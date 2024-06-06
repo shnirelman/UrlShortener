@@ -25,10 +25,10 @@ public class UrlDeleteScheduler {
     /**
      * find urls that haven't been accessed for a long time and send their ids to kafka consumers so that they delete these urls
      */
-//    @SchedulerLock(name = URL_DELETE_LOCK_NAME, lockAtMostFor = "PT20H", lockAtLeastFor = "PT20H")
-    @SchedulerLock(name = URL_DELETE_LOCK_NAME, lockAtMostFor = "PT5S", lockAtLeastFor = "PT5S")
-//    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Moscow")
-    @Scheduled(fixedDelay = 1000)
+
+    @SchedulerLock(name = URL_DELETE_LOCK_NAME, lockAtMostFor = "PT30S", lockAtLeastFor = "PT30S")
+    @Scheduled(cron = "* * * * * *", zone = "Europe/Moscow")
+//    @Scheduled(fixedDelay = 1000)
     public void deleteUrl() {
         System.out.println("scheduled delete");
         try {

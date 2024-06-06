@@ -4,7 +4,7 @@ import random
 import time
 
 def addUrl(s):
-    data = { "longForm": s}
+    data = { "userName": "User_1", "longForm": s}
     r = requests.post('http://localhost:8080/url/create', json = data)
     return r
 
@@ -29,6 +29,7 @@ finish = time.time()
 
 print("average creating time: ", (finish - start) / len(a))
 
+print("Generation examples:")
 for i in range(0, min(len(a), 10)):
     print(a[i])
 
@@ -61,8 +62,3 @@ for p in a:
 global_finish = time.time()
 
 print('2st access: average time per request = ', (global_finish - global_start) / len(a))
-#print('2st access: average time per request = ', s / len(a))
-
-#for i in range(0, min(len(a), 10)):
-#    res = getUrlByFullLink(a[i][1]).text
-#    print(a[i][0], res)

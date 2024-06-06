@@ -15,9 +15,12 @@ import java.util.Optional;
 @Repository
 public interface UrlRepository extends JpaRepository<UrlEntity, Long> {
     @Query
-    Optional<UrlEntity> findByLongForm(String longForm);
+    Optional<UrlEntity> findByUserIdAndLongForm(Long userId, String longForm);
     @Query
-    Optional<UrlEntity> findByShortForm(String shortForm);
+    Optional<UrlEntity> findByUserIdAndShortForm(Long userId, String shortForm);
+
+    @Query
+    List<UrlEntity> findByUserId(Long userId);
 
     @Query(nativeQuery = true,
             value = "SELECT id FROM urls WHERE (urls.used_at < :used_at)")

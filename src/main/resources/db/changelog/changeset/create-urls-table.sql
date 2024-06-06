@@ -1,9 +1,10 @@
 --liquibase formatted sql
 
---changeset shnirelman:1
+--changeset shnirelman:create-urls-table
 
 CREATE TABLE IF NOT EXISTS urls (
     id bigint NOT NULL,
+    user_id bigint NOT NULL,
     short_form varchar(32),
     long_form varchar(256),
     used_at timestamp,

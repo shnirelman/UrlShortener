@@ -11,6 +11,9 @@ public class UrlEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "user_id")
+    private Long userId;
+
     @Column(name = "short_form")
     private String shortForm;
 
@@ -24,10 +27,11 @@ public class UrlEntity {
 
     }
 
-    public UrlEntity(String shortForm, String longForm, Instant createdAt) {
+    public UrlEntity(Long userId, String shortForm, String longForm, Instant usedAt) {
+        this.userId = userId;
         this.shortForm = shortForm;
         this.longForm = longForm;
-        this.usedAt = createdAt;
+        this.usedAt = usedAt;
     }
 
     public Long getId() {
@@ -60,5 +64,13 @@ public class UrlEntity {
 
     public void setUsedAt(Instant usedAt) {
         this.usedAt = usedAt;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

@@ -19,7 +19,7 @@ public interface UrlService {
      * @return {@link Url} long form of url with id
      * @throws EntityNotFoundException if url with provided short form not found
      */
-    Url getUrl(String shortForm) throws EntityNotFoundException;
+    Url getUrl(Long userId, String shortForm) throws EntityNotFoundException;
 
     /**
      * delete url by id
@@ -40,4 +40,6 @@ public interface UrlService {
     void updateUsedTime(Long id);
 
     boolean checkUnusedUrlBeforeDelete(Long id);
+
+    List<Url> getUrlsByUserId(Long userId);
 }
