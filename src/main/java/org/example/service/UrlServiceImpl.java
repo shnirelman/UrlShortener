@@ -7,10 +7,8 @@ import org.example.service.model.Url;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -78,20 +76,23 @@ public class UrlServiceImpl implements UrlService {
     }
 
     @Override
+    public boolean checkUnusedUrlBeforeDelete(Long id) {
+        Optional<UrlEntity> url = urlRepository.findById(id);
+        return url.isPresent() && url.get().getUsedAt().compareTo(getTimeToDelete()) <= 0;
+    }
+
+    @Override
     public void deleteUrl(Long id) {
         urlRepository.deleteById(id);
     }
 
     @Override
     public List<Long> getAllNotUpdatedForADay() {
-//        var instant = Instant.now().minus(1, ChronoUnit.DAYS);
-        var instant = Instant.now().minus(1, ChronoUnit.MINUTES);
-        System.out.println("instant = " + instant);
-        List<Long> res =  urlRepository.findIdsByUsedAtLessThan(instant);
-//        List<Long> res =  urlRepository.getIdsByUsedAtLessThan(instant);
-        System.out.println("res = " + res);
-        return res;
-        //return new ArrayList<>();
+        return urlRepository.findIdsByUsedAtLessThan(getTimeToDelete());
+    }
+
+    private Instant getTimeToDelete() {
+        return Instant.now().minus(1, ChronoUnit.MINUTES);
     }
 
     private long primaryHash(String longForm) {

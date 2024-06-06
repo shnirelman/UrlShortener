@@ -2,7 +2,6 @@ package org.example.controller;
 
 import org.example.controller.dto.UrlDto;
 import org.example.exception.EntityNotFoundException;
-import org.example.repository.UrlRepository;
 import org.example.service.UrlService;
 import org.example.service.UrlServiceImpl;
 import org.example.service.model.Url;

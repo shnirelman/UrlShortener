@@ -1,7 +1,6 @@
 package org.example.repository.entity;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
 
@@ -17,10 +16,6 @@ public class UrlEntity {
 
     @Column(name = "long_form")
     private String longForm;
-
-//    @UpdateTimestamp
-//    @Column(name = "updated_at")
-//    private Instant updatedAt;
 
     @Column(name = "used_at")
     private Instant usedAt;
@@ -66,12 +61,4 @@ public class UrlEntity {
     public void setUsedAt(Instant usedAt) {
         this.usedAt = usedAt;
     }
-
-    //    public Instant getUpdatedAt() {
-//        return updatedAt;
-//    }
-//
-//    public void setUpdatedAt(Instant updatedAt) {
-//        this.updatedAt = updatedAt;
-//    }
 }

@@ -18,7 +18,8 @@ public class UrlDeleteConsumer {
     public void consume(UrlDeleteKafkaMessage message) {
         if (message.id() != null) {
             System.out.println("consume " + message.id());
-            urlService.deleteUrl(message.id());
+            if(urlService.checkUnusedUrlBeforeDelete(message.id()))
+                urlService.deleteUrl(message.id());
         }
     }
 }
