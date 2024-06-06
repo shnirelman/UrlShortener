@@ -24,6 +24,7 @@ public class UrlController {
 
     @GetMapping("/{shortFormSuffix}")
     public String getUrlByShortForm(@PathVariable("shortFormSuffix") String shortFormSuffix) throws EntityNotFoundException {
+        System.out.println("getUrlByShortForm " + shortFormSuffix);
         Url url = urlService.getUrl(UrlServiceImpl.shortFormPrefix + shortFormSuffix);
         urlService.updateUsedTime(url.id());
         return url.longForm();

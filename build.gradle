@@ -32,6 +32,8 @@ dependencies {
     implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.10.0'
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.2.0'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+    implementation group: 'org.liquibase', name: 'liquibase-core', version: '4.28.0'
+
 }
 
 

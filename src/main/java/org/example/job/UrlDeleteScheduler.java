@@ -21,7 +21,8 @@ public class UrlDeleteScheduler {
         this.urlService = urlService;
     }
 
-    //@SchedulerLock(name = URL_DELETE_LOCK_NAME, lockAtMostFor = "PT20H", lockAtLeastFor = "PT20H")
+//    @SchedulerLock(name = URL_DELETE_LOCK_NAME, lockAtMostFor = "PT20H", lockAtLeastFor = "PT20H")
+    @SchedulerLock(name = URL_DELETE_LOCK_NAME, lockAtMostFor = "PT5S", lockAtLeastFor = "PT5S")
 //    @Scheduled(cron = "0 0 3 * * *", zone = "Europe/Moscow")
     @Scheduled(fixedDelay = 1000)
     public void deleteUrl() {
