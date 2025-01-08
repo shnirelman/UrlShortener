@@ -1,9 +1,16 @@
 plugins {
     id 'java'
+    id 'org.springframework.boot' version '3.3.0'
+    id 'io.spring.dependency-management' version '1.1.5'
 }
 
 group = 'org.example'
 version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = '17'
+}
+
 
 repositories {
     mavenCentral()
@@ -12,8 +19,27 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.9.1')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation(group: 'org.postgresql', name: 'postgresql', version: '42.7.3')
+    testImplementation(group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '3.2.4')
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter', version: '3.2.4')
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-jetty', version: '3.2.4')
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-web-services', version: '3.2.4')
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: '3.2.4'
+    implementation(group: 'org.springframework.boot', name: 'spring-boot-starter-data-redis', version: '3.2.4')
+    implementation group: 'io.lettuce', name: 'lettuce-core', version: '6.3.2.RELEASE'
+    implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-spring', version: '5.13.0'
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:5.10.0'
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version: '3.2.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.15.3'
+    implementation group: 'org.liquibase', name: 'liquibase-core', version: '4.28.0'
+
 }
+
+
 
 test {
     useJUnitPlatform()
 }
+
+

@@ -1,0 +1,92 @@
+name: url-app
+services:
+  db:
+    image: "postgres:14-alpine"
+    container_name: db
+    restart: always
+    environment:
+      - POSTGRES_DB=DB_Urls2
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:6.2-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=12345
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:latest"
+    container_name: zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: "confluentinc/cp-kafka:latest"
+    hostname: kafka
+    container_name: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+    ports:
+      - "29092:29092"
+    depends_on:
+      - zookeeper
+
+  url-service-1:
+    container_name: url-service-1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JAVA_OPTS: >-
+        -XX:+UseZGC
+        -Xms256M
+        -Xmx2G
+      SPRING_PROFILES_ACTIVE: "local"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - redis
+      - zookeeper
+      - kafka
+
+  url-service-2:
+    container_name: url-service-2
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: ${DB_URL}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      JAVA_OPTS: >-
+        -XX:+UseZGC
+        -Xms256M
+        -Xmx2G
+      SPRING_PROFILES_ACTIVE: "local"
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+      - redis
+      - zookeeper
+      - kafka

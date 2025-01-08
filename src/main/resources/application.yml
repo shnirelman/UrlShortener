@@ -1,0 +1,36 @@
+spring:
+  application:
+    name: url-app
+  liquibase:
+    enabled: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/DB_Urls2
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: none
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  cache:
+    redis:
+      use-key-prefix: true
+      key-prefix:
+  data:
+    redis:
+      host: redis
+      port: 6379
+  kafka:
+    bootstrap-servers: http://kafka:29092
+
+logging:
+  level:
+    sql: INFO
+
+kafka:
+  bootstrap-servers: http://kafka:29092
